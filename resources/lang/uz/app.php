@@ -475,7 +475,7 @@ return [
 
     'reading_content' => 'Matn/Transkript',
     'audio_url' => 'Audio URL (tinglash uchun)',
-    'listening_youtube_notice' => "YouTube o'zining boshqaruvlariga ega. To'liq practice boshqaruvi uchun bevosita audio URL (mp3/m4a) ishlating.",
+    'listening_youtube_notice' => "",
     'play' => 'Boshlash',
     'pause' => "To'xtatish",
     'replay' => 'Qayta boshlash',

@@ -92,7 +92,9 @@ class QuestionController extends Controller
                 $headerToUse = in_array($firstCell, ['mcq', 'tfng', 'completion', 'matching'], true)
                     ? $defaultHeader
                     : $legacyHeader;
-                $rowData = array_combine($headerToUse, array_pad($row, count($headerToUse), null));
+                $normalizedRow = array_slice($row, 0, count($headerToUse));
+                $normalizedRow = array_pad($normalizedRow, count($headerToUse), null);
+                $rowData = array_combine($headerToUse, $normalizedRow);
                 if ($headerToUse === $legacyHeader) {
                     $rowData['question_type'] = $rowData['question_type'] ?? 'mcq';
                     $rowData['matching_items'] = $rowData['matching_items'] ?? '';
