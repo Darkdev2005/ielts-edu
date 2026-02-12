@@ -6,6 +6,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', __('app.app_name')) }}</title>
+        @php
+            $faviconPngVersion = file_exists(public_path('favicon.png')) ? filemtime(public_path('favicon.png')) : '1';
+            $faviconIcoVersion = file_exists(public_path('favicon.ico')) ? filemtime(public_path('favicon.ico')) : $faviconPngVersion;
+        @endphp
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ $faviconPngVersion }}">
+        <link rel="alternate icon" href="{{ asset('favicon.ico') }}?v={{ $faviconIcoVersion }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
