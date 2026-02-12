@@ -23,3 +23,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# PsySH
+.psysh/
+PsySH/
+storage/psysh/
+
