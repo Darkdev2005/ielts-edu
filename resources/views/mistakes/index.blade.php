@@ -59,32 +59,7 @@
                         <div class="font-semibold text-slate-800">{{ $answer->question?->correct_answer }}</div>
                     </div>
                 </div>
-                @php($explanation = $answer->ai_explanation ?? $answer->question?->ai_explanation)
-                @if($explanation)
-                    @php
-                        $viewer = auth()->user();
-                        $canFullExplanation = $viewer && app(\App\Services\FeatureGate::class)->userCan($viewer, 'ai_explanation_full');
-                        $lines = preg_split('/\r\n|\r|\n/', trim((string) $explanation));
-                        $title = $lines ? array_shift($lines) : null;
-                        $bullets = [];
-                        $tip = null;
-                        foreach ($lines as $line) {
-                            $line = trim((string) $line);
-                            if ($line === '') {
-                                continue;
-                            }
-                            if (stripos($line, 'Tip:') === 0) {
-                                $tip = trim(substr($line, 4));
-                                continue;
-                            }
-                            if (str_starts_with($line, '-')) {
-                                $bullets[] = trim(ltrim($line, '- '));
-                                continue;
-                            }
-                            $bullets[] = $line;
-                        }
-                        $hasStructured = !empty($bullets) || $tip !== null;
-                    @endphp
+                @if($answer->explanation)
                     <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
                         <div class="flex items-center justify-between">
                             <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">{{ __('app.ai_explanation') }}</div>
@@ -92,24 +67,24 @@
                                 {{ $canFullExplanation ? __('app.ai_explanation_full_badge') : __('app.ai_explanation_short_badge') }}
                             </span>
                         </div>
-                        @if($hasStructured)
-                            @if($title)
-                                <div class="mt-2 text-sm font-semibold text-slate-800">{{ $title }}</div>
+                        @if($answer->explanation_has_structured)
+                            @if($answer->explanation_title)
+                                <div class="mt-2 text-sm font-semibold text-slate-800">{{ $answer->explanation_title }}</div>
                             @endif
-                            @if(!empty($bullets))
+                            @if(!empty($answer->explanation_bullets))
                                 <ul class="mt-2 list-disc pl-4 text-sm text-slate-700">
-                                    @foreach($bullets as $bullet)
+                                    @foreach($answer->explanation_bullets as $bullet)
                                         <li>{{ $bullet }}</li>
                                     @endforeach
                                 </ul>
                             @endif
-                            @if($tip !== null)
+                            @if($answer->explanation_tip !== null)
                                 <div class="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
-                                    <span class="font-semibold">Tip:</span> {{ $tip }}
+                                    <span class="font-semibold">Tip:</span> {{ $answer->explanation_tip }}
                                 </div>
                             @endif
                         @else
-                            <div class="mt-2 whitespace-pre-line text-sm text-slate-700">{{ $explanation }}</div>
+                            <div class="mt-2 whitespace-pre-line text-sm text-slate-700">{{ $answer->explanation }}</div>
                         @endif
                     </div>
                 @endif
