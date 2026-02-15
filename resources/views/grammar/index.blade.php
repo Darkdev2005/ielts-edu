@@ -68,7 +68,7 @@
                                 </div>
                             <div class="mt-2 flex items-center gap-2">
                                 <div class="h-1.5 flex-1 rounded-full bg-slate-200">
-                                    <div class="h-full rounded-full {{ $progressClass }}" style="width: {{ $progressPercent }}%"></div>
+                                    <div class="h-full rounded-full {{ $progressClass }}" @style(['width' => $progressPercent . '%'])></div>
                                 </div>
                                 <span class="text-[10px] font-semibold text-slate-500">{{ $progressPercent }}%</span>
                             </div>
@@ -134,7 +134,7 @@
                                     </div>
                                     <div class="mt-2 flex items-center gap-2">
                                         <div class="h-1.5 flex-1 rounded-full bg-slate-200">
-                                            <div class="h-full rounded-full {{ $progressClass }}" style="width: {{ $progressPercent }}%"></div>
+                                            <div class="h-full rounded-full {{ $progressClass }}" @style(['width' => $progressPercent . '%'])></div>
                                         </div>
                                         <span class="text-[10px] font-semibold text-slate-500">{{ $progressPercent }}%</span>
                                     </div>
@@ -189,7 +189,7 @@
                                 <span>{{ $progressPercent }}%</span>
                             </div>
                             <div class="mt-2 h-2 rounded-full bg-slate-200">
-                                <div class="h-full rounded-full {{ $progressClass }}" style="width: {{ $progressPercent }}%"></div>
+                                <div class="h-full rounded-full {{ $progressClass }}" @style(['width' => $progressPercent . '%'])></div>
                             </div>
                         </div>
                     </a>

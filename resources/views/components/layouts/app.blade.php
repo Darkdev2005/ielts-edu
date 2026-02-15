@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? __('app.app_name') }}</title>
+    @php
+        $faviconPngVersion = file_exists(public_path('favicon.png')) ? filemtime(public_path('favicon.png')) : '1';
+        $faviconIcoVersion = file_exists(public_path('favicon.ico')) ? filemtime(public_path('favicon.ico')) : $faviconPngVersion;
+    @endphp
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ $faviconPngVersion }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}?v={{ $faviconIcoVersion }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=space+grotesk:400,500,600,700&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
