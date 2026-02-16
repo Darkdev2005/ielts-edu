@@ -20,7 +20,14 @@
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.18),transparent_45%),radial-gradient(circle_at_85%_10%,rgba(251,146,60,0.18),transparent_45%),radial-gradient(circle_at_50%_90%,rgba(45,212,191,0.18),transparent_45%)]"></div>
         <div class="absolute inset-0 opacity-20 [background-image:linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:40px_40px]"></div>
 
-        <div class="relative" x-data="{ mobileOpen: false, paywallOpen: false, paywallFeature: '', supportOpen: false }" x-on:open-paywall.window="paywallOpen = true; paywallFeature = $event.detail.feature || ''" x-on:open-support.window="supportOpen = true" x-on:keydown.escape.window="mobileOpen = false; paywallOpen = false; supportOpen = false">
+        <div
+            class="relative"
+            x-data="{ mobileOpen: false, paywallOpen: false, paywallFeature: '', supportOpen: false, scrolled: false }"
+            x-on:open-paywall.window="paywallOpen = true; paywallFeature = $event.detail.feature || ''"
+            x-on:open-support.window="supportOpen = true"
+            x-on:keydown.escape.window="mobileOpen = false; paywallOpen = false; supportOpen = false"
+            x-on:scroll.window="scrolled = window.scrollY > 8"
+        >
             @php
                 $navPlan = auth()->user()?->currentPlan;
                 $navPlanSlug = $navPlan?->slug;
@@ -36,7 +43,7 @@
                     ? 'ring-2 ring-rose-200/70 shadow-[0_0_35px_rgba(244,63,94,0.18)]'
                     : 'ring-2 ring-emerald-200/70 shadow-[0_0_35px_rgba(16,185,129,0.18)]';
             @endphp
-            <header class="sticky top-0 z-10 hidden border-b border-white/10 bg-white/10 backdrop-blur md:block relative">
+            <header class="sticky top-0 z-10 hidden border-b border-white/10 backdrop-blur md:block relative" x-bind:class="scrolled ? 'bg-slate-950/95 shadow-lg' : 'bg-white/10'">
                 @if($navHasPremium)
                     <div class="pointer-events-none absolute inset-0 bg-gradient-to-r {{ $premiumGlowClass }} opacity-60"></div>
                 @endif
@@ -110,7 +117,7 @@
                     </nav>
                 </div>
             </header>
-            <header class="sticky top-0 z-10 border-b border-white/10 bg-white/10 backdrop-blur md:hidden relative">
+            <header class="sticky top-0 z-10 border-b border-white/10 backdrop-blur md:hidden relative" x-bind:class="scrolled ? 'bg-slate-950/95 shadow-lg' : 'bg-white/10'">
                 @if($navHasPremium)
                     <div class="pointer-events-none absolute inset-0 bg-gradient-to-r {{ $premiumGlowClass }} opacity-60"></div>
                 @endif
