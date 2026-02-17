@@ -46,6 +46,10 @@ class AIClient
             return $this->geminiChat($messages, $model, $options);
         }
 
+        if ($provider === 'groq') {
+            return $this->groqChat($messages, $model, $options);
+        }
+
         if ($provider === 'cohere') {
             return $this->cohereChat($messages, $model, $options);
         }
@@ -163,6 +167,47 @@ class AIClient
         $this->lastModel = $model;
 
         return $payload;
+    }
+
+    private function groqChat(array $messages, ?string $model = null, array $options = []): array
+    {
+        $apiKey = config('services.groq.api_key');
+        $baseUrl = rtrim(config('services.groq.base_url'), '/');
+        $verifySsl = (bool) config('services.ai.verify_ssl', true);
+        $model = $model ?: config('services.groq.model', 'llama-3.1-8b-instant');
+
+        if (!$apiKey) {
+            throw new \RuntimeException('Groq API key is missing.');
+        }
+
+        $payload = [
+            'model' => $model,
+            'messages' => $messages,
+            'temperature' => (float) ($options['temperature'] ?? 0.2),
+        ];
+
+        if (isset($options['max_tokens'])) {
+            $payload['max_tokens'] = (int) $options['max_tokens'];
+        }
+
+        /** @var \Illuminate\Http\Client\Response $response */
+        $response = Http::withToken($apiKey)
+            ->withOptions(['verify' => $verifySsl])
+            ->timeout(60)
+            ->post($baseUrl.'/chat/completions', $payload);
+
+        if (!$response->successful()) {
+            $error = $response->json('error.message') ?: $response->body();
+            throw new \RuntimeException('Groq request failed: '.$error);
+        }
+
+        $json = $response->json();
+        $json['_provider'] = 'groq';
+        $json['_model'] = $model;
+        $this->lastProvider = 'groq';
+        $this->lastModel = $model;
+
+        return $json;
     }
 
     private function cohereChat(array $messages, ?string $model = null, array $options = []): array
