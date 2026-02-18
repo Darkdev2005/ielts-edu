@@ -72,5 +72,104 @@
     </div>
 
     <div class="mt-8">{{ $attempts->links() }}</div>
+
+    <div class="mt-12">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">{{ __('app.grammar_attempts') }}</h2>
+            <span class="text-xs text-slate-400">{{ $grammarAttempts->total() }}</span>
+        </div>
+        <div class="mt-4 space-y-4">
+            @forelse($grammarAttempts as $grammarAttempt)
+                <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <div class="font-semibold text-slate-900">{{ $grammarAttempt->topic?->title ?? __('app.grammar') }}</div>
+                            <div class="text-xs text-slate-400">{{ $grammarAttempt->completed_at }}</div>
+                        </div>
+                        <div class="rounded-full bg-slate-900 px-3 py-1 text-xs text-white">
+                            {{ $grammarAttempt->score }} / {{ $grammarAttempt->total }}
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-slate-500">{{ __('app.no_attempts') }}</p>
+            @endforelse
+        </div>
+        <div class="mt-4">{{ $grammarAttempts->links() }}</div>
+    </div>
+
+    <div class="mt-12">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">{{ __('app.writing_result') }}</h2>
+            <span class="text-xs text-slate-400">{{ $writingSubmissions->total() }}</span>
+        </div>
+        <div class="mt-4 space-y-4">
+            @forelse($writingSubmissions as $submission)
+                <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
+                    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <div class="font-semibold text-slate-900">{{ $submission->task?->title ?? __('app.writing') }}</div>
+                            <div class="text-xs text-slate-400">
+                                {{ $submission->submitted_at?->format('Y-m-d H:i') ?? $submission->created_at?->format('Y-m-d H:i') }}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-slate-600">
+                            <span class="rounded-full bg-slate-900 px-3 py-1 text-white">
+                                {{ $submission->band_score !== null ? number_format($submission->band_score, 1) : '-' }}
+                            </span>
+                            <span class="rounded-full border border-slate-200 px-3 py-1 text-slate-600">
+                                {{ strtoupper($submission->status ?? 'queued') }}
+                            </span>
+                        </div>
+                    </div>
+                    @if($submission->task?->prompt)
+                        <div class="mt-3 text-xs text-slate-500">
+                            {{ \Illuminate\Support\Str::limit($submission->task->prompt, 140) }}
+                        </div>
+                    @endif
+                </div>
+            @empty
+                <p class="text-slate-500">{{ __('app.no_attempts') }}</p>
+            @endforelse
+        </div>
+        <div class="mt-4">{{ $writingSubmissions->links() }}</div>
+    </div>
+
+    <div class="mt-12">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">{{ __('app.speaking') }}</h2>
+            <span class="text-xs text-slate-400">{{ $speakingSubmissions->total() }}</span>
+        </div>
+        <div class="mt-4 space-y-4">
+            @forelse($speakingSubmissions as $submission)
+                <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm">
+                    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <div class="font-semibold text-slate-900">
+                                {{ $submission->prompt?->prompt ? \Illuminate\Support\Str::limit($submission->prompt->prompt, 140) : __('app.speaking') }}
+                            </div>
+                            <div class="text-xs text-slate-400">
+                                {{ $submission->created_at?->format('Y-m-d H:i') }}
+                                @if($submission->prompt?->part)
+                                    · Part {{ $submission->prompt->part }}
+                                @endif
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-slate-600">
+                            <span class="rounded-full bg-slate-900 px-3 py-1 text-white">
+                                {{ $submission->band_score !== null ? number_format($submission->band_score, 1) : '-' }}
+                            </span>
+                            <span class="rounded-full border border-slate-200 px-3 py-1 text-slate-600">
+                                {{ strtoupper($submission->status ?? 'queued') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-slate-500">{{ __('app.no_attempts') }}</p>
+            @endforelse
+        </div>
+        <div class="mt-4">{{ $speakingSubmissions->links() }}</div>
+    </div>
 </x-layouts.app>
 

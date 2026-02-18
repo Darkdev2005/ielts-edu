@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Attempt;
 use App\Models\AttemptAnswer;
+use App\Models\GrammarAttempt;
+use App\Models\SpeakingSubmission;
 use App\Models\User;
+use App\Models\WritingSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -104,6 +107,53 @@ class ResultController extends Controller
             ->paginate(20)
             ->appends($request->query());
 
+        $grammarAttemptsQuery = GrammarAttempt::with('topic')
+            ->where('user_id', $user->id);
+
+        if ($from) {
+            $grammarAttemptsQuery->whereDate('completed_at', '>=', $from);
+        }
+        if ($to) {
+            $grammarAttemptsQuery->whereDate('completed_at', '<=', $to);
+        }
+
+        $grammarAttempts = $grammarAttemptsQuery
+            ->orderByDesc('completed_at')
+            ->orderByDesc('id')
+            ->paginate(10, ['*'], 'grammar_page')
+            ->appends($request->query());
+
+        $writingSubmissionsQuery = WritingSubmission::with('task')
+            ->where('user_id', $user->id);
+
+        if ($from) {
+            $writingSubmissionsQuery->whereDate(DB::raw('COALESCE(submitted_at, created_at)'), '>=', $from);
+        }
+        if ($to) {
+            $writingSubmissionsQuery->whereDate(DB::raw('COALESCE(submitted_at, created_at)'), '<=', $to);
+        }
+
+        $writingSubmissions = $writingSubmissionsQuery
+            ->orderByDesc(DB::raw('COALESCE(submitted_at, created_at)'))
+            ->orderByDesc('id')
+            ->paginate(10, ['*'], 'writing_page')
+            ->appends($request->query());
+
+        $speakingSubmissionsQuery = SpeakingSubmission::with('prompt')
+            ->where('user_id', $user->id);
+
+        if ($from) {
+            $speakingSubmissionsQuery->whereDate('created_at', '>=', $from);
+        }
+        if ($to) {
+            $speakingSubmissionsQuery->whereDate('created_at', '<=', $to);
+        }
+
+        $speakingSubmissions = $speakingSubmissionsQuery
+            ->latest()
+            ->paginate(10, ['*'], 'speaking_page')
+            ->appends($request->query());
+
         $stats = Attempt::where('user_id', $user->id)
             ->select(
                 DB::raw('COUNT(*) as total_attempts'),
@@ -113,7 +163,14 @@ class ResultController extends Controller
             )
             ->first();
 
-        return view('admin.results.show', compact('user', 'attempts', 'stats'));
+        return view('admin.results.show', compact(
+            'user',
+            'attempts',
+            'stats',
+            'grammarAttempts',
+            'writingSubmissions',
+            'speakingSubmissions'
+        ));
     }
 
     public function attempt(User $user, Attempt $attempt)
